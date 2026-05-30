@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#edece8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>HEIC 转 JPG/PNG — iPhone 照片转换、本地不上传 | bodhi.tools</title>
+  <meta name="description" content="免费把 iPhone 的 HEIC/HEIF 照片转成 JPG 或 PNG,支持批量,100% 浏览器本地处理、文件不上传。专治 HEIC 发给安卓/传网站打不开、无水印、无需注册。" />
+  <meta name="keywords" content="heic转jpg,heic转png,heic怎么转jpg,iphone照片转换,heic打不开,heic是什么格式,heic转换器,heic to jpg,在线heic转jpg" />
+  <link rel="canonical" href="https://heic.bodhi.tools/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="HEIC 转 JPG/PNG — iPhone 照片转换、本地不上传" />
+  <meta property="og:description" content="把 iPhone 的 HEIC 照片批量转成 JPG/PNG,本地处理不上传。专治发安卓/传网站打不开。" />
+  <meta property="og:url" content="https://heic.bodhi.tools/" />
+  <meta name="twitter:card" content="summary" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"HEIC 转 JPG/PNG","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"},"description":"把 iPhone 的 HEIC/HEIF 照片转成 JPG 或 PNG,100% 浏览器本地处理、文件不上传。"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"HEIC 是什么?为什么照片打不开?","acceptedAnswer":{"@type":"Answer","text":"HEIC/HEIF 是 iPhone 自 iOS 11 起的默认照片格式,体积小画质好,但很多安卓手机、Windows 电脑和网站不支持,所以会打不开。转成 JPG 或 PNG 后任何设备都能正常查看。"}},{"@type":"Question","name":"我的照片会被上传到服务器吗?","acceptedAnswer":{"@type":"Answer","text":"不会。转换全部在你的浏览器本地完成(基于 libheif 的 WebAssembly),照片不上传任何服务器。可在开发者工具网络面板验证,没有上传请求。"}},{"@type":"Question","name":"可以批量转换多张吗?","acceptedAnswer":{"@type":"Answer","text":"可以。一次拖入多张 HEIC,选好格式点转换,转完可逐张下载,也可一键打包成 ZIP 下载全部。"}},{"@type":"Question","name":"JPG 和 PNG 怎么选?","acceptedAnswer":{"@type":"Answer","text":"照片选 JPG(体积小、适合分享上传);需要透明背景或无损选 PNG(体积更大)。绝大多数 iPhone 照片转 JPG 即可。"}}]}</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="/" aria-label="HEIC 转换 首页">
+        <span class="seal-mark" aria-hidden="true"><span>转</span></span>
+        <span><b>HEIC 转换</b><span class="sub mono">HEIC · BODHI.TOOLS</span></span>
+      </a>
+      <span class="trust" title="所有处理均在你的设备本地完成">
+        <span class="dot" aria-hidden="true"></span>
+        <span><span class="t-full">文件不上传 · </span>100% 本地处理</span>
+      </span>
+      <nav class="links" aria-label="导航">
+        <a href="https://bodhi.tools/tools">更多工具</a><a href="#how">原理</a><a href="#faq">常见问题</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="kicker">HEIC → JPG / PNG · 本地处理</span>
+          <h1>HEIC 转<br><em>JPG / PNG</em></h1>
+          <p class="lead">把 iPhone 的 HEIC/HEIF 照片转成通用的 JPG 或 PNG——专治发给安卓、传网站、发邮件时"打不开"。支持批量,全部在浏览器本地完成,文件不上传,免费、无水印。</p>
+          <div class="badges">
+            <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 7.5 8 10 4.5-2.5 8-5 8-10V6l-8-4Z"/></svg>文件零上传</span>
+            <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>批量转换</span>
+            <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>无水印</span>
+            <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>不限次数</span>
+          </div>
+        </div>
+        <div class="seal" aria-hidden="true">
+          <div><div class="s-top">HEIC →</div><div class="s-main">JPG</div><div class="s-bot">ON-DEVICE</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace" id="tool">
+      <div class="ws-head">
+        <h2>HEIC 转 JPG / PNG</h2>
+        <p>把 iPhone 的 HEIC/HEIF 照片转成通用格式,可批量,本地完成不上传。</p>
+      </div>
+      <label class="dropzone" id="dropzone">
+        <span class="dz-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></span>
+        <div class="dz-title">拖入 HEIC 图片,或点击选择</div>
+        <div class="dz-hint">支持多选 · HEIC / HEIF · 文件不会上传</div>
+        <input type="file" id="fileInput" accept=".heic,.heif,image/heic,image/heif" multiple />
+      </label>
+      <div id="panel" hidden>
+        <div class="hc-filelist" id="fileList"></div>
+        <div class="options">
+          <div class="field">
+            <label>输出格式</label>
+            <div class="segmented" id="format">
+              <button type="button" data-fmt="image/jpeg" aria-pressed="true">JPG</button>
+              <button type="button" data-fmt="image/png">PNG</button>
+            </div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" id="convertBtn" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 0 1 8-8 8 8 0 0 1 6.3 3.1M20 12a8 8 0 0 1-8 8 8 8 0 0 1-6.3-3.1"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>开始转换
+          </button>
+        </div>
+        <div class="statusline" id="status" role="status" aria-live="polite"></div>
+        <div class="result" id="result"></div>
+      </div>
+      <p class="notice">转换在你的设备本地完成,照片不上传。HEIC 是 iPhone 默认照片格式,转成 JPG/PNG 后任何设备/网站都能打开。</p>
+    </section>
+
+    <aside class="ad" aria-label="广告"><span class="ad-tag">广告位 · Ad Slot</span></aside>
+
+    <section class="block" id="how">
+      <span class="kicker">WHY</span>
+      <h2>为什么 iPhone 照片总"打不开"</h2>
+      <p class="lede">iPhone 自 iOS 11 起默认用 <strong>HEIC</strong> 存照片——更省空间、画质更好,但很多<strong>安卓手机、Windows、网站和表单</strong>不认这个格式,于是发过去就成了打不开的文件。转成 JPG/PNG 就通用了。</p>
+      <div class="steps">
+        <div class="step"><h3>拖入 HEIC 照片</h3><p>可一次选多张。照片只进入当前网页,不上传。</p></div>
+        <div class="step"><h3>选 JPG 或 PNG</h3><p>分享上传选 JPG;需要透明/无损选 PNG。本地用 WASM 转换。</p></div>
+        <div class="step"><h3>下载</h3><p>逐张下载,或一键打包 ZIP 下载全部。</p></div>
+      </div>
+    </section>
+
+    <section class="block" id="faq">
+      <span class="kicker">FAQ</span>
+      <h2>常见问题</h2>
+      <div class="faq">
+        <details open><summary>HEIC 是什么?为什么照片打不开?</summary><div class="ans">HEIC/HEIF 是 iPhone 自 iOS 11 起的默认照片格式,体积小画质好,但很多安卓、Windows 和网站不支持,所以会打不开。转成 JPG 或 PNG 后任何设备都能看。</div></details>
+        <details><summary>我的照片会被上传到服务器吗?</summary><div class="ans">不会。转换全部在你的浏览器本地完成(基于 libheif 的 WebAssembly),照片不上传任何服务器。</div></details>
+        <details><summary>可以批量转换多张吗?</summary><div class="ans">可以。一次拖入多张,转完可逐张下载,也可一键打包成 ZIP 下载全部。</div></details>
+        <details><summary>JPG 和 PNG 怎么选?</summary><div class="ans">照片选 JPG(体积小、适合分享上传);需要透明背景或无损选 PNG。多数 iPhone 照片转 JPG 即可。</div></details>
+      </div>
+    </section>
+
+    <aside class="ad" aria-label="广告"><span class="ad-tag">广告位 · Ad Slot</span></aside>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <div class="f-brand">
+        <b>HEIC 转换 · bodhi.tools</b>
+        <p>把隐私放在第一位的免费 HEIC 转换工具,所有处理都在你的浏览器本地完成。</p>
+      </div>
+      <nav aria-label="相关">
+        <a href="https://bodhi.tools/tools">全部工具</a>
+        <a href="https://compress.bodhi.tools">图片压缩</a>
+        <a href="https://pdf.bodhi.tools">PDF 工具箱</a>
+      </nav>
+      <div class="copy mono">© <span id="year"></span> bodhi.tools · 文件不上传 · No file leaves your device.</div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

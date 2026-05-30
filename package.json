@@ -1,0 +1,21 @@
+{
+  "name": "heic-converter",
+  "private": true,
+  "version": "1.0.0",
+  "description": "HEIC 转 JPG/PNG — iPhone 照片转通用格式，本地处理不上传",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "heic-to": "^1.5.2",
+    "jszip": "^3.10.1"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14"
+  }
+}
