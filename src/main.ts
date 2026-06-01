@@ -3,6 +3,30 @@ import JSZip from 'jszip';
 
 const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector(s) as T;
 
+const L = (document.documentElement.lang || 'zh').toLowerCase().startsWith('en') ? 'en' : 'zh';
+const T = {
+  zh: {
+    pickHeic: '请选择 HEIC / HEIF 图片(iPhone 照片)',
+    pending: (n: number) => `${n} 个文件待转换 · 选格式后点「开始转换」`,
+    loadingEngine: '正在加载转换引擎(首次约需几秒)…',
+    converting: (i: number, n: number) => `正在本地转换 ${i}/${n}…`,
+    doneN: (n: number) => `转换完成 · ${n} 个文件`,
+    fail: '转换失败,请确认文件是 HEIC/HEIF',
+    download: '下载',
+    zipAll: (n: number) => `打包下载全部 (${n})`,
+  },
+  en: {
+    pickHeic: 'Please choose HEIC / HEIF images (iPhone photos)',
+    pending: (n: number) => `${n} file(s) ready · pick a format, then click "Convert"`,
+    loadingEngine: 'Loading the converter (a few seconds on first run)…',
+    converting: (i: number, n: number) => `Converting locally ${i}/${n}…`,
+    doneN: (n: number) => `Done · ${n} file(s)`,
+    fail: 'Conversion failed — make sure the files are HEIC/HEIF',
+    download: 'Download',
+    zipAll: (n: number) => `Download all as ZIP (${n})`,
+  },
+}[L];
+
 const fileInput = $<HTMLInputElement>('#fileInput');
 const dropzone = $('#dropzone');
 const panel = $('#panel');
@@ -46,7 +70,7 @@ function renderFileList() {
 function addFiles(incoming: File[]) {
   const heics = incoming.filter(isHeicName);
   if (!heics.length) {
-    setStatus('请选择 HEIC / HEIF 图片(iPhone 照片)', 'err');
+    setStatus(T.pickHeic, 'err');
     return;
   }
   files = files.concat(heics);
@@ -55,10 +79,9 @@ function addFiles(incoming: File[]) {
   convertBtn.disabled = false;
   resultEl.classList.remove('show');
   resultEl.innerHTML = '';
-  setStatus(`${files.length} 个文件待转换 · 选格式后点「开始转换」`);
+  setStatus(T.pending(files.length));
 }
 
-// ---------- 上传:点击 + 拖拽 ----------
 fileInput.addEventListener('change', () => {
   if (fileInput.files) addFiles(Array.from(fileInput.files));
   fileInput.value = '';
@@ -81,7 +104,6 @@ dropzone.addEventListener('drop', (e) => {
   if (fs) addFiles(Array.from(fs));
 });
 
-// ---------- 格式选择 ----------
 formatSeg.querySelectorAll('button').forEach((b) => {
   b.addEventListener('click', () => {
     formatSeg.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', 'false'));
@@ -90,7 +112,6 @@ formatSeg.querySelectorAll('button').forEach((b) => {
   });
 });
 
-// ---------- 转换 ----------
 convertBtn.addEventListener('click', async () => {
   if (!files.length) return;
   convertBtn.disabled = true;
@@ -99,18 +120,18 @@ convertBtn.addEventListener('click', async () => {
   const ext = outType === 'image/png' ? 'png' : 'jpg';
   const results: { name: string; blob: Blob; url: string }[] = [];
   try {
-    setStatus('正在加载转换引擎(首次约需几秒)…');
-    const { heicTo } = await import('heic-to'); // 懒加载:WASM 引擎仅在转换时下载
+    setStatus(T.loadingEngine);
+    const { heicTo } = await import('heic-to');
     for (let i = 0; i < files.length; i++) {
-      setStatus(`正在本地转换 ${i + 1}/${files.length}…`);
+      setStatus(T.converting(i + 1, files.length));
       const blob = (await heicTo({ blob: files[i], type: outType, quality: 0.92 })) as Blob;
       const name = files[i].name.replace(/\.[^.]+$/, '') + '.' + ext;
       results.push({ name, blob, url: URL.createObjectURL(blob) });
     }
-    setStatus(`转换完成 · ${results.length} 个文件`, 'ok');
+    setStatus(T.doneN(results.length), 'ok');
     renderResults(results, ext);
   } catch (e) {
-    setStatus((e as Error).message || '转换失败,请确认文件是 HEIC/HEIF', 'err');
+    setStatus((e as Error).message || T.fail, 'err');
   } finally {
     convertBtn.disabled = false;
   }
@@ -122,12 +143,12 @@ function renderResults(results: { name: string; blob: Blob; url: string }[], ext
       (r) =>
         `<div class="hc-result-row"><span class="hc-name" title="${r.name}">${r.name}</span>` +
         `<span class="size mono">${fmt(r.blob.size)}</span>` +
-        `<a class="btn btn-ghost btn-sm" href="${r.url}" download="${r.name}">下载</a></div>`,
+        `<a class="btn btn-ghost btn-sm" href="${r.url}" download="${r.name}">${T.download}</a></div>`,
     )
     .join('');
   const zipBtn =
     results.length > 1
-      ? `<button class="btn btn-primary" id="zipBtn" style="margin-top:14px">打包下载全部 (${results.length})</button>`
+      ? `<button class="btn btn-primary" id="zipBtn" style="margin-top:14px">${T.zipAll(results.length)}</button>`
       : '';
   resultEl.innerHTML = `<div class="hc-results">${rows}</div>${zipBtn}`;
   resultEl.classList.add('show');
